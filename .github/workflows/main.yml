@@ -23,6 +23,11 @@ jobs:
                 python server.py &
                 echo "Waiting for Flask server to start"
                 sleep 30
+            - name: Check Flask server status
+              run: |
+                curl -I http://localhost:5000
+            
             - name: Run Locust load test
               run: |
+                locust --host http://localhost:5000 --locustfile locustfile.py --headless --run-time 2m
                 locust --config-users '[{"user_class_name": "SimpleUser", "fixed_count": 20}, {"user_class_name": "HeavyUser", "fixed_count": 980}]' --run-time 2m --headless
